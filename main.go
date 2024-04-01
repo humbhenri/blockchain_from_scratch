@@ -51,8 +51,6 @@ func InitBlockChain() *BlockChain {
 }
 
 func main() {
-	rand.Seed(time.Now().Unix())
-
 	chain := InitBlockChain()
 	chain.AddBlock("First after genesis")
 	chain.AddBlock("Second after genesis")
