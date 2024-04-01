@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+
+	_ "github.com/humbhenri/blockchain_from_scratch/blockchain"
 )
 
 const (
