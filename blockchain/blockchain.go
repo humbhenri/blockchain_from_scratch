@@ -3,11 +3,13 @@ package blockchain
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"io"
 	"math/rand"
 	"strconv"
 	"time"
-	"encoding/base64"
 )
 
 type block struct {
@@ -17,6 +19,12 @@ type block struct {
 	Timestamp int64
 }
 
+type JsonBlock struct {
+	Hash string `json:"hash"`
+	Data string `json:"data"`
+	Timestamp int64 `json:"timestamp"`
+}
+
 type blockchain struct {
 	blocks []*block
 }
@@ -24,6 +32,13 @@ type blockchain struct {
 type Blockchain interface {
 	AddBlock(string)
 	Debug()
+	Print(io.Writer)
+}
+
+var theBlockchain *blockchain
+
+func GetBlockchain() Blockchain {
+	return theBlockchain
 }
 
 func (b *block) deriveHash() {
@@ -52,7 +67,8 @@ func genesis() *block {
 }
 
 func InitBlockChain() Blockchain {
-	return &blockchain{[]*block{genesis()}}
+	theBlockchain = &blockchain{[]*block{genesis()}}
+	return theBlockchain
 }
 
 func (chain *blockchain) Debug() {
@@ -62,4 +78,17 @@ func (chain *blockchain) Debug() {
 			base64.RawStdEncoding.EncodeToString(block.PrevHash),
 			block.Timestamp)
 	}
+}
+
+func (chain *blockchain) Print(writer io.Writer) {
+	enc := json.NewEncoder(writer)
+	var blocks []JsonBlock
+	for _, block := range chain.blocks {
+		blocks = append(blocks, JsonBlock{
+			Hash: base64.RawStdEncoding.EncodeToString(block.Hash),
+			Data: string(block.Data),
+			Timestamp: block.Timestamp,
+		})
+	}
+	enc.Encode(blocks)
 }
