@@ -3,11 +3,11 @@ package main
 import (
 	"bytes"
 	"crypto/sha256"
-	"encoding/base64"
-	"fmt"
 	"math/rand"
 	"strconv"
 	"time"
+
+	"github.com/humbhenri/blockchain_from_scratch/p2p"
 )
 
 type BlockChain struct {
@@ -51,14 +51,15 @@ func InitBlockChain() *BlockChain {
 }
 
 func main() {
-	chain := InitBlockChain()
-	chain.AddBlock("First after genesis")
-	chain.AddBlock("Second after genesis")
-	chain.AddBlock("Third after genesis")
-	for _, block := range chain.blocks {
-		fmt.Printf("Block data: %s, hash: %s, previous hash: %s, timestamp: %d\n", block.Data,
-			base64.RawStdEncoding.EncodeToString(block.Hash),
-			base64.RawStdEncoding.EncodeToString(block.PrevHash),
-			block.Timestamp)
-	}
+	// chain := InitBlockChain()
+	// chain.AddBlock("First after genesis")
+	// chain.AddBlock("Second after genesis")
+	// chain.AddBlock("Third after genesis")
+	// for _, block := range chain.blocks {
+	// 	fmt.Printf("Block data: %s, hash: %s, previous hash: %s, timestamp: %d\n", block.Data,
+	// 		base64.RawStdEncoding.EncodeToString(block.Hash),
+	// 		base64.RawStdEncoding.EncodeToString(block.PrevHash),
+	// 		block.Timestamp)
+	// }
+	p2p.StartServer()
 }
