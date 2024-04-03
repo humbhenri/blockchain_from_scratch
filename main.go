@@ -1,12 +1,11 @@
 package main
 
 import (
-	"github.com/humbhenri/blockchain_from_scratch/p2p"
 	"github.com/humbhenri/blockchain_from_scratch/blockchain"
+	"github.com/humbhenri/blockchain_from_scratch/p2p"
 )
 
 func main() {
-	chain := blockchain.InitBlockChain()
-	chain.Debug()
+	blockchain.InitBlockChain()
 	p2p.StartServer()
 }
