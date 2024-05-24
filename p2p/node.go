@@ -13,8 +13,8 @@ package p2p
 
 // Node represents a node in the network
 type Node struct {
-	ID string
-	IP string
+	ID   string
+	IP   string
 	Port int
 }
 
@@ -42,3 +42,7 @@ func NewNetwork(bootstrap []Node) *Network {
 	return network
 }
 
+// FindNode pings a bootstrap node to stablish a connection
+func FindNode(network *Network) bool {
+
+}
