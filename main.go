@@ -1,19 +1,16 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/humbhenri/blockchain_from_scratch/blockchain"
 	"github.com/humbhenri/blockchain_from_scratch/p2p"
 )
 
-var isBootstrapNode bool
+var bootstrapNode string
 
 func initP2PServer(wg *sync.WaitGroup) {
 	defer wg.Done()
@@ -24,30 +21,20 @@ func initP2PServer(wg *sync.WaitGroup) {
 // if no bootstrap node is known this node can be one if the flag isBootstrapNode is true
 func bootstrapNetwork() (*p2p.Network, error) {
 	var network *p2p.Network
-	if isBootstrapNode {
+	if bootstrapNode == "" {
 		network = p2p.NewNetwork(nil)
 		return network, nil
 	}
-	BLOCKCHAIN_BOOSTRAP_NODE := "BLOCKCHAIN_BOOSTRAP_NODE"
-	bootstrapNode := os.Getenv(BLOCKCHAIN_BOOSTRAP_NODE)
-	if bootstrapNode == "" {
-		return nil, fmt.Errorf("please provide the bootstrap node using the environment variable %s", BLOCKCHAIN_BOOSTRAP_NODE)
-	}
-	xs := strings.Split(bootstrapNode, " ")
-	if len(xs) != 3 {
-		return nil, errors.New("bootstrap node must be in format <ID> <IP> <Port>")
-	}
-	port, err := strconv.Atoi(xs[2])
+	node, err := p2p.NewNode(bootstrapNode)
 	if err != nil {
-		return nil, fmt.Errorf("port must be a number, but was %s", xs[2])
+		return nil, err
 	}
-	node := p2p.Node{ID: xs[0], IP: xs[1], Port: port}
-	nodes := []p2p.Node{node}
+	nodes := []p2p.Node{*node}
 	return p2p.NewNetwork(nodes), nil
 }
 
 func main() {
-	flag.BoolVar(&isBootstrapNode, "bootstrap", true, "Indicates that his node is a bootstrap node")
+	flag.StringVar(&bootstrapNode, "bootstrap", "", "The bootstrap node to connect to, if empty this node is the bootstrap node")
 	flag.Parse()
 
 	network, err := bootstrapNetwork()
