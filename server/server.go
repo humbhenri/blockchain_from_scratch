@@ -41,17 +41,17 @@ func StartServer(port int) {
 	// Resolve the UDP address to listen on
 	addr, err := net.ResolveUDPAddr("udp", ":"+portStr)
 	if err != nil {
-		log.Fatalf("Error resolving address:", err)
+		log.Fatalf("Error resolving address: %s\n", err)
 	}
 
 	// Create a UDP connection for listening
 	conn, err := net.ListenUDP("udp", addr)
 	if err != nil {
-		log.Fatalf("Error listening on UDP:", err)
+		log.Fatalf("Error listening on UDP: %s\n", err)
 	}
 	defer conn.Close()
 
-	fmt.Println("UDP server listening on port 8080")
+	fmt.Printf("Node listening on port %d\n", port)
 
 	// Buffer to store incoming data
 	buf := make([]byte, 1024)
