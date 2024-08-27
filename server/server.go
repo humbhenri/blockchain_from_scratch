@@ -15,6 +15,7 @@ const (
 	Unknown Command = iota
 	Ping
 	Echo
+	AddData
 )
 
 // CommandNames maps Command values to their names
@@ -22,6 +23,7 @@ var CommandNames = map[Command]string{
 	Unknown: "UNKNOWN",
 	Ping:    "PING",
 	Echo:    "ECHO",
+	AddData: "ADD_DATA",
 }
 
 // CommandData holds the command and its associated data
@@ -82,6 +84,8 @@ func parseCommand(message string) (Command, string) {
 		return Ping, getData(parts)
 	case "ECHO":
 		return Echo, getData(parts)
+	case "ADD_DATA":
+		return AddData, getData(parts)
 	default:
 		return Unknown, message
 	}

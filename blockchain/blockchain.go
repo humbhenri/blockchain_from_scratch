@@ -20,9 +20,9 @@ type block struct {
 }
 
 type JsonBlock struct {
-	Hash string `json:"hash"`
-	Data string `json:"data"`
-	Timestamp int64 `json:"timestamp"`
+	Hash      string `json:"hash"`
+	Data      string `json:"data"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 type blockchain struct {
@@ -85,8 +85,8 @@ func (chain *blockchain) Print(writer io.Writer) {
 	var blocks []JsonBlock
 	for _, block := range chain.blocks {
 		blocks = append(blocks, JsonBlock{
-			Hash: base64.RawStdEncoding.EncodeToString(block.Hash),
-			Data: string(block.Data),
+			Hash:      base64.RawStdEncoding.EncodeToString(block.Hash),
+			Data:      string(block.Data),
 			Timestamp: block.Timestamp,
 		})
 	}
