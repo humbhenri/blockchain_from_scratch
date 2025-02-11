@@ -7,12 +7,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	"golang.org/x/exp/slices"
 )
+
+var nonce int = 0
 
 type block struct {
 	Hash      []byte
@@ -29,6 +31,7 @@ type JsonBlock struct {
 
 type blockchain struct {
 	blocks []*block
+	difficulty int
 }
 
 type Blockchain interface {
@@ -46,31 +49,30 @@ func GetBlockchain() Blockchain {
 
 func (b *block) deriveHash() {
 	timestamp := []byte(strconv.FormatInt(b.Timestamp, 10))
-	info := bytes.Join([][]byte{b.Data, b.PrevHash, timestamp}, []byte{})
+	nonceStr := strconv.Itoa(nonce)
+	info := bytes.Join([][]byte{b.Data, b.PrevHash, timestamp, []byte(nonceStr)}, []byte{})
 	hash := sha256.Sum256(info)
 	b.Hash = hash[:]
 }
 
-func createBlock(data string, prevHash []byte) *block {
-	n := rand.Intn(3)
-	time.Sleep(time.Second * time.Duration(n))
+func createBlock(data string, prevHash []byte, difficulty int) *block {
 	block := &block{Hash: []byte{}, Data: []byte(data), PrevHash: prevHash, Timestamp: time.Now().Unix()}
-	block.deriveHash()
+	block.MineBlock(difficulty)
 	return block
 }
 
 func (chain *blockchain) AddBlock(data string) {
 	prevBlock := chain.blocks[len(chain.blocks)-1]
-	new := createBlock(data, prevBlock.Hash)
+	new := createBlock(data, prevBlock.Hash, chain.difficulty)
 	chain.blocks = append(chain.blocks, new)
 }
 
-func genesis() *block {
-	return createBlock("Genesis", []byte{})
+func genesis(difficulty int) *block {
+	return createBlock("Genesis", []byte{}, difficulty)
 }
 
-func InitBlockChain() Blockchain {
-	theBlockchain = &blockchain{[]*block{genesis()}}
+func InitBlockChain(difficulty int) Blockchain {
+	theBlockchain = &blockchain{ blocks: []*block{genesis(difficulty)}, difficulty: difficulty }
 	return theBlockchain
 }
 
@@ -107,4 +109,12 @@ func (chain *blockchain) IsChainValid() bool {
 		}
 	}
 	return true
+}
+
+func (block *block) MineBlock(difficulty int) {
+	target := strings.Repeat("0", difficulty)
+	for !strings.HasPrefix(string(block.Hash), target) {
+		nonce += 1
+		block.deriveHash()
+	}
 }

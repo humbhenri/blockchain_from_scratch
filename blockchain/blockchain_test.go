@@ -4,24 +4,12 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"strings"
 	"testing"
 )
 
-func TestBlockCreation(t *testing.T)  {
-	block := createBlock("Genesis", nil)
-	if block.Hash == nil {
-		t.Error("hash not be empty")
-	}
-
-	block2 := createBlock("Hello world", block.Hash)
-	if block2.Hash == nil {
-		t.Error("hash not be empty")
-	}
-
-}
-
 func TestBlockchainCreation(t *testing.T) {
-	chain := InitBlockChain()
+	chain := InitBlockChain(2)
 	chain.AddBlock("Data 1")
 	chain.AddBlock("Data 2")
 	chain.AddBlock("Data 3")
@@ -33,5 +21,13 @@ func TestBlockchainCreation(t *testing.T) {
 
 	if !chain.IsChainValid() {
 		t.Error("Blockchain is not valid.")
+	}
+}
+
+func TestMineBlock(t *testing.T) {
+	b := genesis(2)
+	b.MineBlock(2)
+	if !strings.HasPrefix(string(b.Hash), "00") {
+		t.Error("Mine failed")
 	}
 }
