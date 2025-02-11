@@ -10,6 +10,8 @@ import (
 	"math/rand"
 	"strconv"
 	"time"
+
+	"golang.org/x/exp/slices"
 )
 
 type block struct {
@@ -33,6 +35,7 @@ type Blockchain interface {
 	AddBlock(string)
 	Debug()
 	Print(io.Writer)
+	IsChainValid() bool
 }
 
 var theBlockchain *blockchain
@@ -82,6 +85,7 @@ func (chain *blockchain) Debug() {
 
 func (chain *blockchain) Print(writer io.Writer) {
 	enc := json.NewEncoder(writer)
+	enc.SetIndent("", "  ")
 	var blocks []JsonBlock
 	for _, block := range chain.blocks {
 		blocks = append(blocks, JsonBlock{
@@ -91,4 +95,16 @@ func (chain *blockchain) Print(writer io.Writer) {
 		})
 	}
 	enc.Encode(blocks)
+}
+
+// IsChainValid test for blockchain integrity
+func (chain *blockchain) IsChainValid() bool {
+	for i := 1; i < len(chain.blocks); i++ {
+		prevBlock := chain.blocks[i-1]
+		block := chain.blocks[i]
+		if slices.Compare(prevBlock.Hash,  block.PrevHash) != 0 {
+			return false
+		}
+	}
+	return true
 }
