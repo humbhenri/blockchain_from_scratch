@@ -5,8 +5,8 @@ WARNING: WORK IN PROGRESS !!!
 ## TODO
   * [x] Block model
   * [x] Calculate block hash
-  * [ ] Block validation
-  * [ ] Mine blocks
+  * [x] Block validation
+  * [x] Mine blocks
   * [ ] Create block and view in blockchain
   * [ ] Create wallet to store keys
   * [ ] Create transaction and signatures
@@ -15,6 +15,14 @@ WARNING: WORK IN PROGRESS !!!
 ```
 go run main.go
 ```
+
+## Testing and interacting with the blockchain
+
+Add some data in the chain
+``` shell
+./udp.sh ADD_DATA 21312
+```
+
 
 A test script that exercises interactions between nodes is provided in `test.sh`.
 

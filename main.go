@@ -30,9 +30,11 @@ func processCommands() {
 	}
 }
 
+const difficulty = 3
+
 func main() {
 	port := flag.Int("port", 8080, "UDP port to listen on")
-	blockchain.InitBlockChain()
+	blockchain.InitBlockChain(difficulty)
 	flag.Parse()
 	go server.StartServer(*port)
 	go processCommands()
