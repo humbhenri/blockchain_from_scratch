@@ -125,5 +125,5 @@ func (block *block) MineBlock(difficulty int) {
 		nonce += 1
 		block.deriveHash()
 	}
-	log.Println("Block mined")
+	log.Printf("Block mined, nonce = %d\n", nonce)
 }
