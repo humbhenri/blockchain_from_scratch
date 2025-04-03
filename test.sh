@@ -12,7 +12,7 @@ start_server() {
 send_message_to_server() {
     MSG=$1
     PORT=$2
-    echo "$MSG" | nc -q 1 -u 127.0.0.1 $PORT    
+    echo "$MSG" | nc -q 1 -u 127.0.0.1 $PORT
 }
 
 go build

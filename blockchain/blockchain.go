@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -30,7 +31,7 @@ type JsonBlock struct {
 }
 
 type blockchain struct {
-	blocks []*block
+	blocks     []*block
 	difficulty int
 }
 
@@ -42,6 +43,11 @@ type Blockchain interface {
 }
 
 var theBlockchain *blockchain
+
+func (b block) String() string {
+	return fmt.Sprintf("Block: %s ",
+		base64.RawStdEncoding.EncodeToString(b.Hash))
+}
 
 func GetBlockchain() Blockchain {
 	return theBlockchain
@@ -58,6 +64,7 @@ func (b *block) deriveHash() {
 func createBlock(data string, prevHash []byte, difficulty int) *block {
 	block := &block{Hash: []byte{}, Data: []byte(data), PrevHash: prevHash, Timestamp: time.Now().Unix()}
 	block.MineBlock(difficulty)
+	log.Printf("block mined %v\n", block)
 	return block
 }
 
@@ -72,13 +79,13 @@ func genesis(difficulty int) *block {
 }
 
 func InitBlockChain(difficulty int) Blockchain {
-	theBlockchain = &blockchain{ blocks: []*block{genesis(difficulty)}, difficulty: difficulty }
+	theBlockchain = &blockchain{blocks: []*block{genesis(difficulty)}, difficulty: difficulty}
 	return theBlockchain
 }
 
 func (chain *blockchain) Debug() {
 	for _, block := range chain.blocks {
-		fmt.Printf("Block data: %s, hash: %s, previous hash: %s, timestamp: %d\n", block.Data,
+		fmt.Printf("Block data: %s, hash: %s, previous hash: %s, timestamp: %d\n\n", block.Data,
 			base64.RawStdEncoding.EncodeToString(block.Hash),
 			base64.RawStdEncoding.EncodeToString(block.PrevHash),
 			block.Timestamp)
@@ -104,7 +111,7 @@ func (chain *blockchain) IsChainValid() bool {
 	for i := 1; i < len(chain.blocks); i++ {
 		prevBlock := chain.blocks[i-1]
 		block := chain.blocks[i]
-		if slices.Compare(prevBlock.Hash,  block.PrevHash) != 0 {
+		if slices.Compare(prevBlock.Hash, block.PrevHash) != 0 {
 			return false
 		}
 	}
@@ -112,9 +119,11 @@ func (chain *blockchain) IsChainValid() bool {
 }
 
 func (block *block) MineBlock(difficulty int) {
+	log.Println("Mining started")
 	target := strings.Repeat("0", difficulty)
 	for !strings.HasPrefix(string(block.Hash), target) {
 		nonce += 1
 		block.deriveHash()
 	}
+	log.Println("Block mined")
 }

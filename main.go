@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
 
 	"github.com/humbhenri/blockchain_from_scratch/blockchain"
 	"github.com/humbhenri/blockchain_from_scratch/server"
@@ -17,15 +17,15 @@ func processCommands() {
 		// Process the received command
 		switch cmdData.Command {
 		case server.Ping:
-			fmt.Println("Received PING command with data:", cmdData.Data)
+			log.Println("Received PING command with data:", cmdData.Data)
 		case server.Echo:
-			fmt.Println("Received ECHO command with data:", cmdData.Data)
+			log.Println("Received ECHO command with data:", cmdData.Data)
 		case server.AddData:
 			chain.AddBlock(cmdData.Data)
-			fmt.Println("Add block")
+	    case server.Print:
 			chain.Debug()
 		case server.Unknown:
-			fmt.Println("Received UNKNOWN command with data:", cmdData.Data)
+			log.Println("Received UNKNOWN command with data:", cmdData.Data)
 		}
 	}
 }
@@ -38,6 +38,6 @@ func main() {
 	flag.Parse()
 	go server.StartServer(*port)
 	go processCommands()
-	fmt.Println("Blockchain started")
+	log.Println("Blockchain started")
 	select {}
 }
