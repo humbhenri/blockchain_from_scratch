@@ -22,7 +22,7 @@ func processCommands() {
 			log.Println("Received ECHO command with data:", cmdData.Data)
 		case server.AddData:
 			chain.AddBlock(cmdData.Data)
-	    case server.Print:
+		case server.Print:
 			chain.Debug()
 		case server.Unknown:
 			log.Println("Received UNKNOWN command with data:", cmdData.Data)
@@ -30,14 +30,15 @@ func processCommands() {
 	}
 }
 
-const difficulty = 3
-
 func main() {
 	port := flag.Int("port", 8080, "UDP port to listen on")
-	blockchain.InitBlockChain(difficulty)
+	difficulty := flag.Int("difficulty", 2, "proof of work difficulty")
 	flag.Parse()
+
+	blockchain.InitBlockChain(*difficulty)
 	go server.StartServer(*port)
 	go processCommands()
 	log.Println("Blockchain started")
+
 	select {}
 }

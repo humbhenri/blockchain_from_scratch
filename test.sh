@@ -15,8 +15,7 @@ send_message_to_server() {
     echo "$MSG" | nc -q 1 -u 127.0.0.1 $PORT
 }
 
-go build
-if [ $? -ne 0 ]; then
+if ! go build ; then
     echo "Error: Go build failed!"
     exit 1
 fi
