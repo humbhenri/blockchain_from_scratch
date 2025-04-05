@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
+	"time"
 
 	"github.com/humbhenri/blockchain_from_scratch/blockchain"
 	"github.com/humbhenri/blockchain_from_scratch/server"
@@ -10,24 +12,35 @@ import (
 
 func processCommands() {
 	chain := blockchain.GetBlockchain()
-	for {
-		// Receive command data from the channel
-		cmdData := <-server.DataChannel
-
-		// Process the received command
-		switch cmdData.Command {
-		case server.Ping:
-			log.Println("Received PING command with data:", cmdData.Data)
-		case server.Echo:
-			log.Println("Received ECHO command with data:", cmdData.Data)
-		case server.AddData:
-			chain.AddBlock(cmdData.Data)
-		case server.Print:
-			chain.Debug()
-		case server.Unknown:
-			log.Println("Received UNKNOWN command with data:", cmdData.Data)
+	ticker := time.NewTicker(15 * time.Second)
+	go func() {
+		for {
+			select {
+			case cmdData := <-server.DataChannel:
+				// Process the received command
+				switch cmdData.Command {
+				case server.Ping:
+					log.Println("Received PING command with data:", cmdData.Data)
+				case server.Echo:
+					log.Println("Received ECHO command with data:", cmdData.Data)
+				case server.AddData:
+					chain.AddBlock(cmdData.Data)
+				case server.Print:
+					chain.Debug()
+				case server.Unknown:
+					log.Println("Received UNKNOWN command with data:", cmdData.Data)
+				}
+			case <-ticker.C:
+				log.Println("Saving blockchain in file system ...")
+				f, err := os.OpenFile("/tmp/block.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+				if err != nil {
+					panic(err)
+				}
+				defer f.Close()
+				chain.Print(f)
+			}
 		}
-	}
+	}()
 }
 
 func main() {
@@ -37,7 +50,7 @@ func main() {
 
 	blockchain.InitBlockChain(*difficulty)
 	go server.StartServer(*port)
-	go processCommands()
+	processCommands()
 	log.Println("Blockchain started")
 
 	select {}
