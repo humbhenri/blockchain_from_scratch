@@ -3,14 +3,14 @@ package main
 import (
 	"flag"
 	"log"
-	"os"
 	"time"
 
 	"github.com/humbhenri/blockchain_from_scratch/blockchain"
+	"github.com/humbhenri/blockchain_from_scratch/fs"
 	"github.com/humbhenri/blockchain_from_scratch/server"
 )
 
-func processCommands() {
+func processCommands(port int) {
 	chain := blockchain.GetBlockchain()
 	ticker := time.NewTicker(15 * time.Second)
 	go func() {
@@ -31,13 +31,10 @@ func processCommands() {
 					log.Println("Received UNKNOWN command with data:", cmdData.Data)
 				}
 			case <-ticker.C:
-				log.Println("Saving blockchain in file system ...")
-				f, err := os.OpenFile("/tmp/block.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-				if err != nil {
-					panic(err)
-				}
-				defer f.Close()
-				chain.Print(f)
+				log.Println("Saving data to fs ...")
+				w := fs.OutputStream(port)
+				chain.Print(w)
+				defer w.Close()
 			}
 		}
 	}()
@@ -50,7 +47,7 @@ func main() {
 
 	blockchain.InitBlockChain(*difficulty)
 	go server.StartServer(*port)
-	processCommands()
+	processCommands(*port)
 	log.Println("Blockchain started")
 
 	select {}
