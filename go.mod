@@ -9,5 +9,3 @@ require (
 	github.com/gorilla/mux v1.8.1
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac
 )
-
-require github.com/nightlyone/lockfile v1.0.0 // indirect

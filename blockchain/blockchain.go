@@ -26,6 +26,7 @@ type block struct {
 
 type JsonBlock struct {
 	Hash      string `json:"hash"`
+	PrevHash  string `json:"prev_hash"`
 	Data      string `json:"data"`
 	Timestamp int64  `json:"timestamp"`
 }
@@ -99,11 +100,36 @@ func (chain *blockchain) Print(writer io.Writer) {
 	for _, block := range chain.blocks {
 		blocks = append(blocks, JsonBlock{
 			Hash:      base64.RawStdEncoding.EncodeToString(block.Hash),
+			PrevHash:  base64.RawStdEncoding.EncodeToString(block.PrevHash),
 			Data:      string(block.Data),
 			Timestamp: block.Timestamp,
 		})
 	}
 	enc.Encode(blocks)
+}
+
+func Read(reader io.Reader) (error, *blockchain) {
+	enc := json.NewDecoder(reader)
+	var json_blocks []JsonBlock
+	err := enc.Decode(&json_blocks)
+	if err != nil {
+		return err, nil
+	}
+	var blocks []*block
+	for _, b := range json_blocks {
+		hash, err := base64.RawStdEncoding.DecodeString(b.Hash)
+		if err != nil {
+			return err, nil
+		}
+		prevHash, err := base64.RawStdEncoding.DecodeString(b.PrevHash)
+		blocks = append(blocks, &block{
+			Hash:      hash,
+			PrevHash:  prevHash,
+			Timestamp: b.Timestamp,
+			Data:      []byte(b.Data),
+		})
+	}
+	return nil, &blockchain{blocks: blocks}
 }
 
 // IsChainValid test for blockchain integrity

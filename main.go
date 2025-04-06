@@ -45,10 +45,17 @@ func main() {
 	difficulty := flag.Int("difficulty", 2, "proof of work difficulty")
 	flag.Parse()
 
+	r := fs.ReadStream(*port)
+	err, b := blockchain.Read(r)
+	if err != nil {
+		log.Println("blockchain read error", err)
+	} else {
+		b.Debug()
+	}
 	blockchain.InitBlockChain(*difficulty)
 	go server.StartServer(*port)
 	processCommands(*port)
 	log.Println("Blockchain started")
-
+	blockchain.GetBlockchain().Debug()
 	select {}
 }
