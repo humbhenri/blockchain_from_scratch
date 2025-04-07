@@ -41,6 +41,7 @@ type Blockchain interface {
 	Debug()
 	Print(io.Writer)
 	IsChainValid() bool
+    SetDifficulty(int)
 }
 
 var theBlockchain *blockchain
@@ -108,18 +109,18 @@ func (chain *blockchain) Print(writer io.Writer) {
 	enc.Encode(blocks)
 }
 
-func Read(reader io.Reader) (error, *blockchain) {
+func Load(reader io.Reader) error {
 	enc := json.NewDecoder(reader)
 	var json_blocks []JsonBlock
 	err := enc.Decode(&json_blocks)
 	if err != nil {
-		return err, nil
+		return err
 	}
 	var blocks []*block
 	for _, b := range json_blocks {
 		hash, err := base64.RawStdEncoding.DecodeString(b.Hash)
 		if err != nil {
-			return err, nil
+			return err
 		}
 		prevHash, err := base64.RawStdEncoding.DecodeString(b.PrevHash)
 		blocks = append(blocks, &block{
@@ -129,7 +130,8 @@ func Read(reader io.Reader) (error, *blockchain) {
 			Data:      []byte(b.Data),
 		})
 	}
-	return nil, &blockchain{blocks: blocks}
+    theBlockchain = &blockchain{blocks: blocks}
+	return nil
 }
 
 // IsChainValid test for blockchain integrity
@@ -152,4 +154,8 @@ func (block *block) MineBlock(difficulty int) {
 		block.deriveHash()
 	}
 	log.Printf("Block mined, nonce = %d\n", nonce)
+}
+
+func (chain *blockchain) SetDifficulty(difficulty int) {
+    chain.difficulty = difficulty
 }

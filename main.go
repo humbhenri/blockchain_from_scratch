@@ -8,6 +8,7 @@ import (
 	"github.com/humbhenri/blockchain_from_scratch/blockchain"
 	"github.com/humbhenri/blockchain_from_scratch/fs"
 	"github.com/humbhenri/blockchain_from_scratch/server"
+
 )
 
 func processCommands(port int) {
@@ -46,13 +47,13 @@ func main() {
 	flag.Parse()
 
 	r := fs.ReadStream(*port)
-	err, b := blockchain.Read(r)
+	err := blockchain.Load(r)
 	if err != nil {
 		log.Println("blockchain read error", err)
+        blockchain.InitBlockChain(*difficulty)
 	} else {
-		b.Debug()
+		blockchain.GetBlockchain().SetDifficulty(*difficulty)
 	}
-	blockchain.InitBlockChain(*difficulty)
 	go server.StartServer(*port)
 	processCommands(*port)
 	log.Println("Blockchain started")
