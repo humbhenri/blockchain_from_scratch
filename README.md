@@ -7,7 +7,7 @@ WARNING: WORK IN PROGRESS !!!
   * [x] Calculate block hash
   * [x] Block validation
   * [x] Mine blocks
-  * [ ]Save blocks to filesystem
+  * [x] Save blocks to filesystem
   * [ ] Create block and view in blockchain
   * [ ] Create wallet to store keys
   * [ ] Create transaction and signatures
