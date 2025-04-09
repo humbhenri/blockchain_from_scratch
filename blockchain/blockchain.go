@@ -42,6 +42,7 @@ type Blockchain interface {
 	Print(io.Writer)
 	IsChainValid() bool
     SetDifficulty(int)
+    Blocks() []*JsonBlock
 }
 
 var theBlockchain *blockchain
@@ -109,6 +110,19 @@ func (chain *blockchain) Print(writer io.Writer) {
 	enc.Encode(blocks)
 }
 
+func (chain *blockchain) Blocks() []*JsonBlock {
+    var blocks []*JsonBlock
+	for _, block := range chain.blocks {
+		blocks = append(blocks, &JsonBlock{
+			Hash:      base64.RawStdEncoding.EncodeToString(block.Hash),
+			PrevHash:  base64.RawStdEncoding.EncodeToString(block.PrevHash),
+			Data:      string(block.Data),
+			Timestamp: block.Timestamp,
+		})
+	}
+    return blocks
+}
+
 func Load(reader io.Reader) error {
 	enc := json.NewDecoder(reader)
 	var json_blocks []JsonBlock
@@ -123,6 +137,9 @@ func Load(reader io.Reader) error {
 			return err
 		}
 		prevHash, err := base64.RawStdEncoding.DecodeString(b.PrevHash)
+        if err != nil {
+            return err
+        }
 		blocks = append(blocks, &block{
 			Hash:      hash,
 			PrevHash:  prevHash,

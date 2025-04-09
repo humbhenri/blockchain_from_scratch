@@ -52,7 +52,7 @@ func StartServer(port int) {
 	}
 	defer conn.Close()
 
-	log.Printf("Node listening on port %d\n", port)
+	log.Printf("Node listening on UDP port %d\n", port)
 
 	// Buffer to store incoming data
 	buf := make([]byte, 1024)

@@ -8,6 +8,7 @@ WARNING: WORK IN PROGRESS !!!
   * [x] Block validation
   * [x] Mine blocks
   * [x] Save blocks to filesystem
+  * [ ] Create block explorer visualization
   * [ ] Sync two chains
   * [ ] Create block and view in blockchain
   * [ ] Create wallet to store keys

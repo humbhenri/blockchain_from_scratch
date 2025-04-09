@@ -1,0 +1,40 @@
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HTML5 Boilerplate</title>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css">
+        <meta name="color-scheme" content="light dark">
+    </head>
+
+    <body>
+        <main>
+            <h1>Block Explorer</h1>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Hash</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Mined Date & Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .}}
+                    <tr>
+                        <th scope="row">{{.Hash}}</th>
+                        <th scope="row">{{.Data}}</th>
+                        <td scope="row">{{.Timestamp}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+                <tfoot>
+                </tfoot>
+            </table>
+        </main>
+        <script src="scripts.js"></script>
+    </body>
+
+</html>

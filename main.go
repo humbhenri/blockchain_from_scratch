@@ -2,13 +2,16 @@ package main
 
 import (
 	"flag"
+	"html/template"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/humbhenri/blockchain_from_scratch/blockchain"
 	"github.com/humbhenri/blockchain_from_scratch/fs"
 	"github.com/humbhenri/blockchain_from_scratch/server"
 
+	"net/http"
 )
 
 func processCommands(port int) {
@@ -35,11 +38,13 @@ func processCommands(port int) {
 				log.Println("Saving data to fs ...")
 				w := fs.OutputStream(port)
 				chain.Print(w)
-				defer w.Close()
+				w.Close()
 			}
 		}
 	}()
 }
+
+var tpl *template.Template
 
 func main() {
 	port := flag.Int("port", 8080, "UDP port to listen on")
@@ -58,5 +63,15 @@ func main() {
 	processCommands(*port)
 	log.Println("Blockchain started")
 	blockchain.GetBlockchain().Debug()
-	select {}
+
+    tpl, _ = template.ParseGlob("templates/*.html")
+    http.HandleFunc("/", BlockExplorerHandleFunc)
+    portStr := strconv.Itoa(*port)
+    log.Printf("Block explorer listening on TCP port %s\n", portStr)
+    http.ListenAndServe(":" + portStr, nil)
+}
+
+func BlockExplorerHandleFunc(w http.ResponseWriter, r *http.Request) {
+    blocks := blockchain.GetBlockchain().Blocks()
+    tpl.ExecuteTemplate(w, "index.html", blocks)
 }
