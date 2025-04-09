@@ -31,6 +31,12 @@ type JsonBlock struct {
 	Timestamp int64  `json:"timestamp"`
 }
 
+// TimestampFmt returns the timestamp formatted for humans
+func (b *JsonBlock) TimestampFmt() string  {
+    t := time.Unix(b.Timestamp, 0)
+    return t.Format("02/01/2006, 15:04:05")
+}
+
 type blockchain struct {
 	blocks     []*block
 	difficulty int

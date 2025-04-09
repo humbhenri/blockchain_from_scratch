@@ -67,8 +67,8 @@ func main() {
     tpl, _ = template.ParseGlob("templates/*.html")
     http.HandleFunc("/", BlockExplorerHandleFunc)
     portStr := strconv.Itoa(*port)
-    log.Printf("Block explorer listening on TCP port %s\n", portStr)
-    http.ListenAndServe(":" + portStr, nil)
+    log.Printf("Block explorer listening on http://localhost:%s\n", portStr)
+    log.Fatal(http.ListenAndServe(":" + portStr, nil))
 }
 
 func BlockExplorerHandleFunc(w http.ResponseWriter, r *http.Request) {
