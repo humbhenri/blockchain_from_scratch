@@ -3,7 +3,7 @@ package blockchain
 import (
 	"bytes"
 	"crypto/sha256"
-	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -54,8 +54,7 @@ type Blockchain interface {
 var theBlockchain *blockchain
 
 func (b block) String() string {
-	return fmt.Sprintf("Block: %s ",
-		base64.RawStdEncoding.EncodeToString(b.Hash))
+	return fmt.Sprintf("Block: %s ", hex.EncodeToString(b.Hash))
 }
 
 func GetBlockchain() Blockchain {
@@ -95,8 +94,8 @@ func InitBlockChain(difficulty int) Blockchain {
 func (chain *blockchain) Debug() {
 	for _, block := range chain.blocks {
 		fmt.Printf("Block data: %s, hash: %s, previous hash: %s, timestamp: %d\n\n", block.Data,
-			base64.RawStdEncoding.EncodeToString(block.Hash),
-			base64.RawStdEncoding.EncodeToString(block.PrevHash),
+			hex.EncodeToString(block.Hash),
+			hex.EncodeToString(block.PrevHash),
 			block.Timestamp)
 	}
 }
@@ -107,8 +106,8 @@ func (chain *blockchain) Print(writer io.Writer) {
 	var blocks []JsonBlock
 	for _, block := range chain.blocks {
 		blocks = append(blocks, JsonBlock{
-			Hash:      base64.RawStdEncoding.EncodeToString(block.Hash),
-			PrevHash:  base64.RawStdEncoding.EncodeToString(block.PrevHash),
+			Hash:      hex.EncodeToString(block.Hash),
+			PrevHash:  hex.EncodeToString(block.PrevHash),
 			Data:      string(block.Data),
 			Timestamp: block.Timestamp,
 		})
@@ -120,8 +119,8 @@ func (chain *blockchain) Blocks() []*JsonBlock {
     var blocks []*JsonBlock
 	for _, block := range chain.blocks {
 		blocks = append(blocks, &JsonBlock{
-			Hash:      base64.RawStdEncoding.EncodeToString(block.Hash),
-			PrevHash:  base64.RawStdEncoding.EncodeToString(block.PrevHash),
+			Hash:      hex.EncodeToString(block.Hash),
+			PrevHash:  hex.EncodeToString(block.PrevHash),
 			Data:      string(block.Data),
 			Timestamp: block.Timestamp,
 		})
@@ -138,11 +137,11 @@ func Load(reader io.Reader) error {
 	}
 	var blocks []*block
 	for _, b := range json_blocks {
-		hash, err := base64.RawStdEncoding.DecodeString(b.Hash)
+		hash, err := hex.DecodeString(b.Hash)
 		if err != nil {
 			return err
 		}
-		prevHash, err := base64.RawStdEncoding.DecodeString(b.PrevHash)
+		prevHash, err := hex.DecodeString(b.PrevHash)
         if err != nil {
             return err
         }
