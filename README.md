@@ -7,10 +7,10 @@ WARNING: WORK IN PROGRESS !!!
   * [x] Calculate block hash
   * [x] Block validation
   * [x] Mine blocks
-  * [x] Save blocks to filesystem
-  * [ ] Create block explorer visualization
-  * [ ] Sync two chains
-  * [ ] Create block and view in blockchain
+  * [x] Save blockchain to filesystem
+  * [x] Create block explorer visualization
+  * [ ] Sync blockchain data between two nodes
+  * [ ] Implement consensus algorithm between nodes
   * [ ] Create wallet to store keys
   * [ ] Create transaction and signatures
 
