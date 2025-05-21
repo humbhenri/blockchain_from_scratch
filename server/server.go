@@ -5,6 +5,7 @@ import (
 	"net"
 	"strconv"
 	"strings"
+	"bufio"
 )
 
 // Command represents different types of commands
@@ -39,36 +40,28 @@ var DataChannel = make(chan CommandData)
 func StartServer(port int) {
 	portStr := strconv.Itoa(port)
 
-	// Resolve the UDP address to listen on
-	addr, err := net.ResolveUDPAddr("udp", ":"+portStr)
+	ln, err := net.Listen("tcp", ":" + portStr)
 	if err != nil {
 		log.Fatalf("Error resolving address: %s\n", err)
 	}
+	defer ln.Close()
+	log.Printf("Listening on %s", portStr)
 
-	// Create a UDP connection for listening
-	conn, err := net.ListenUDP("udp", addr)
+	conn, err := ln.Accept()
 	if err != nil {
-		log.Fatalf("Error listening on UDP: %s\n", err)
+		log.Fatalf("Error listening on TCP: %s\n", err)
 	}
 	defer conn.Close()
-
-	log.Printf("Node listening on UDP port %d\n", port)
-
-	// Buffer to store incoming data
-	buf := make([]byte, 1024)
-
+	log.Printf("Node listening on TCP port %d\n", port)
 	for {
-		// Read from the UDP connection
-		n, _, err := conn.ReadFromUDP(buf)
+		reader := bufio.NewReader(conn)
+		message, err := reader.ReadString('\n')
 		if err != nil {
-			log.Println("Error reading from UDP:", err)
-			continue
+			log.Printf("Error reading: %v", err)
+			return
 		}
-
-		message := string(buf[:n])
+		log.Printf("Received %s", message)
 		cmd, data := parseCommand(message)
-
-		// Send the command and its data to the channel
 		DataChannel <- CommandData{Command: cmd, Data: data}
 	}
 }

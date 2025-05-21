@@ -4,7 +4,7 @@ import (
 	"flag"
 	"html/template"
 	"log"
-	"strconv"
+	//	"strconv"
 	"time"
 
 	"github.com/humbhenri/blockchain_from_scratch/blockchain"
@@ -47,7 +47,7 @@ func processCommands(port int) {
 var tpl *template.Template
 
 func main() {
-	port := flag.Int("port", 8080, "UDP port to listen on")
+	port := flag.Int("port", 8080, "TCP port to listen on")
 	difficulty := flag.Int("difficulty", 2, "proof of work difficulty")
 	flag.Parse()
 
@@ -64,11 +64,12 @@ func main() {
 	log.Println("Blockchain started")
 	blockchain.GetBlockchain().Debug()
 
-    tpl, _ = template.ParseGlob("templates/*.html")
-    http.HandleFunc("/", BlockExplorerHandleFunc)
-    portStr := strconv.Itoa(*port)
-    log.Printf("Block explorer listening on http://localhost:%s\n", portStr)
-    log.Fatal(http.ListenAndServe(":" + portStr, nil))
+	select {}
+    // tpl, _ = template.ParseGlob("templates/*.html")
+    // http.HandleFunc("/", BlockExplorerHandleFunc)
+    // portStr := strconv.Itoa(*port)
+    // log.Printf("Block explorer listening on http://localhost:%s\n", portStr)
+    // log.Fatal(http.ListenAndServe(":" + portStr, nil))
 }
 
 func BlockExplorerHandleFunc(w http.ResponseWriter, r *http.Request) {

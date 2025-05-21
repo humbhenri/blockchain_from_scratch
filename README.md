@@ -23,7 +23,7 @@ go run main.go
 
 Add some data in the chain
 ``` shell
-./udp.sh ADD_DATA 21312
+./tcp.sh ADD_DATA 21312
 ```
 
 

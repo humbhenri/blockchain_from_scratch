@@ -1,4 +1,4 @@
-#!/bin/env sh
+#!/bin/sh
 
 if [ -z $1 ]; then
     echo "cmd is required"
@@ -9,4 +9,4 @@ CMD=$1
 DATA=$2
 PORT="${3:-8080}"
 
-echo -n "$CMD $DATA" | nc -4u -w0 localhost $PORT
+echo "$CMD $DATA" | nc localhost $PORT
