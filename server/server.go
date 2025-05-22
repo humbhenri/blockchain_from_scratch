@@ -73,7 +73,7 @@ func handleRequest(conn net.Conn) {
 
 // parseCommand parses the message and returns the command and its data
 func parseCommand(message string) (Command, string) {
-	parts := strings.SplitN(message, " ", 2)
+	parts := strings.SplitN(strings.TrimSpace(message), " ", 2)
 	if len(parts) < 1 {
 		return Unknown, message
 	}

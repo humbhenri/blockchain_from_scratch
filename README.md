@@ -21,9 +21,13 @@ go run main.go
 
 ## Testing and interacting with the blockchain
 
-Add some data in the chain
+Interacting with the blockchain:
+
 ``` shell
-./tcp.sh ADD_DATA 21312
+nc localhost 8080
+ping
+echo blah
+add_data test
 ```
 
 
