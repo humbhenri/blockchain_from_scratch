@@ -1,11 +1,11 @@
 package server
 
 import (
+	"bufio"
 	"log"
 	"net"
 	"strconv"
 	"strings"
-	"bufio"
 )
 
 // Command represents different types of commands
@@ -40,24 +40,29 @@ var DataChannel = make(chan CommandData)
 func StartServer(port int) {
 	portStr := strconv.Itoa(port)
 
-	ln, err := net.Listen("tcp", ":" + portStr)
+	ln, err := net.Listen("tcp", ":"+portStr)
 	if err != nil {
 		log.Fatalf("Error resolving address: %s\n", err)
 	}
 	defer ln.Close()
 	log.Printf("Listening on %s", portStr)
 
-	conn, err := ln.Accept()
-	if err != nil {
-		log.Fatalf("Error listening on TCP: %s\n", err)
-	}
-	defer conn.Close()
-	log.Printf("Node listening on TCP port %d\n", port)
 	for {
-		reader := bufio.NewReader(conn)
+		conn, err := ln.Accept()
+		if err != nil {
+			log.Fatalf("Error listening on TCP: %s\n", err)
+		}
+		go handleRequest(conn)
+	}
+}
+
+func handleRequest(conn net.Conn) {
+	reader := bufio.NewReader(conn)
+	for {
 		message, err := reader.ReadString('\n')
 		if err != nil {
 			log.Printf("Error reading: %v", err)
+			conn.Close()
 			return
 		}
 		log.Printf("Received %s", message)
